@@ -1,0 +1,1 @@
+componentReady('modules.scripture');

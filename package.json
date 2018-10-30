@@ -1,0 +1,18 @@
+{
+  "name": "ChurchPresent",
+  "version": "0.0.1",
+  "description": "A presentation software for churches",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "./node_modules/.bin/electron ."
+  },
+  "author": "David Strout",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^3.0.0",
+    "electron-rebuild": "^1.8.2",
+    "mysql": "^2.16.0",
+    "request": "^2.88.0"
+  }
+}

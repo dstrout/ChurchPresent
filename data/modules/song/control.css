@@ -1,0 +1,31 @@
+#songSearchTB {
+	padding: 7px 10px;
+	font-family: inherit;
+	width: 100%;
+	outline: none;
+	border: 1px solid silver;
+	margin-bottom: .75em;
+}
+
+#songSearchTB:focus {
+	border: 1px solid #107fff;
+}
+
+#songList {
+	overflow-y: auto;
+	position: relative;
+}
+
+.song {
+	background: #FAFAFA;
+	padding: 8px;
+	cursor: default;
+}
+
+.song.selected {
+	background-color: #107fff;
+	color: white;
+	border-radius: 1px;
+	border: 1px dotted #3492FF;
+	padding: 7px;
+}

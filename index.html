@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>ChurchPresent</title>
+		<link rel="icon" sizes="480x480" href="icon.png">
+		<link rel="stylesheet" href="data/css/jquery-ui.min.css">
+		<link rel="stylesheet" href="data/css/jquery-ui.structure.min.css">
+		<link rel="stylesheet" href="data/css/jquery-ui.theme.min.css">
+		<link rel="stylesheet" href="data/css/churchpresent.css">
+		<script>
+			window.nodeRequire = require;
+			delete window.require;
+			delete window.exports;
+			delete window.module;
+		</script>
+		<script defer src="data/fa5/js/packs/solid.js"></script>
+		<script defer src="data/fa5/js/fontawesome.js"></script>
+		<script type="text/javascript" src="data/js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="data/js/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="data/js/control/program.js"></script>
+		<script type="text/javascript" src="data/js/control/init.js"></script>
+	</head>
+	<body>
+		<div id="toolbar" ondblclick="window.location.reload();">
+			<button id="new-program"><span class="fa fa-file"></span></button>
+			<button id="open-program"><span class="fa fa-folder-open"></span></button>
+			<button id="save-program"><span class="fa fa-save"></span></button>
+			<span class="toolbar-separator"></span>
+			<button id="black-display"><span class="fa fa-stop"></span></button>
+		</div>
+		<div id="search">
+			<div id="search-and-results">
+				<input type="text" id="search-box" placeholder="Search songs, scriptures, images . . ."><!--
+				<div id="search-menu-container">
+					<button id="search-options-btn"><span class="fa fa-angle-down"></span></button>
+					<div id="search-menu">
+						
+					</div>
+				</div>
+				--><img src="data/images/search-loading.gif" id="search-loading">
+				<span id="no-results">No results</span>
+				<div id="other-items">
+					<button id="empty-slide-btn" title="Click or drag to add an empty slide"><span></span></button>
+				</div>
+				<div id="search-results">
+					
+				</div>
+			</div>
+		</div>
+		<div id="program-outer">
+			<div id="program-wrapper">
+				<div id="program">
+					
+				</div>
+				<div id="program-item-contextmenu">
+					<div id="song-contextmenu">
+						
+					</div>
+					<div id="scripture-contextmenu">
+						
+					</div>
+					<div id="empty-contextmenu">
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
