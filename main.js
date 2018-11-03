@@ -16,7 +16,7 @@ let appWindows = {}
 
 function loadSettings() {
 	console.log(electron.screen.getAllDisplays());
-	app.quit();
+	app.exit();return;
 	settings.controlDisplay = electron.screen.getPrimaryDisplay().id,
 	settings.presentDisplay = electron.screen.getPrimaryDisplay().id,
 
@@ -142,7 +142,7 @@ function createWindows() {
 		appWindows.presentWindow.destroy()
 		appWindows.presentWindow = null
 
-		app.quit();
+		app.exit();
 	})
 	appWindows.controlWindow.on('minimize', function () {
 		appWindows.presentWindow.hide()
@@ -303,7 +303,7 @@ app.on('ready', loadSettings);
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
 	if (process.platform !== 'darwin') {
-		//app.quit()
+		//app.exit()
 	}
 })
 
