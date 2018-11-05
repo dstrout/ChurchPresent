@@ -15,8 +15,8 @@ let settings = {}
 let appWindows = {}
 
 function loadSettings() {
-	console.log(electron.screen.getAllDisplays());
-	app.exit();return;
+	//console.log(electron.screen.getAllDisplays());
+	//app.exit();return;
 	settings.controlDisplay = electron.screen.getPrimaryDisplay().id,
 	settings.presentDisplay = electron.screen.getPrimaryDisplay().id,
 
@@ -73,10 +73,10 @@ function createWindows() {
 
 				thisDisplay = displays[i];
 				settings.controlWindow = {
-					"x": thisDisplay.workArea.x + 20,
-					"y": thisDisplay.workArea.y + 20,
-					"w": thisDisplay.workArea.width - 40,
-					"h": thisDisplay.workArea.height - 40
+					"x": thisDisplay.workArea.x,
+					"y": thisDisplay.workArea.y,
+					"w": thisDisplay.workArea.width,
+					"h": thisDisplay.workArea.height
 				}
 
 			}
@@ -101,10 +101,13 @@ function createWindows() {
 		width: settings.controlWindow.w,
 		height: settings.controlWindow.h,
 		x: settings.controlWindow.x,
-		y: settings.controlWindow.y - 28,
+		y: settings.controlWindow.y,
 		show: false,
-		icon: path.join(__dirname, 'icon.png')
+		icon: path.join(__dirname, 'icon.png'),
+		autoHideMenuBar: false
 	})
+
+	appWindows.controlWindow.setMenu(null);
 
 	// and load the index.html of the app.
 	appWindows.controlWindow.loadURL(url.format({
@@ -153,19 +156,24 @@ function createWindows() {
 	})
 
 	appWindows.presentWindow = new BrowserWindow({
-		x: presentDisplay.workArea.x + 10,
-		y: presentDisplay.workArea.y + 10,
+		x: presentDisplay.workArea.x,
+		y: presentDisplay.workArea.y,
 		show: false,
-		skipTaskbar: true
+		skipTaskbar: true,
+		autoHideMenuBar: true,
+
 	})
+	appWindows.presentWindow.setMenu(null);
 	appWindows.presentWindow.loadURL(url.format({
 		pathname: path.join(__dirname, 'present.html'),
 		protocol: 'file:',
-		slashes: true
+		slashes: true,
+		frame: false
 	}))
 
 	appWindows.presentWindow.show();appWindows.presentWindow.setFullScreen(true);appWindows.presentWindow.setAlwaysOnTop(true);
 	appWindows.loadingWindow.close();appWindows.loadingWindow = null;appWindows.controlWindow.show();appWindows.controlWindow.focus();
+	appWindows.controlWindow.webContents.openDevTools()
 
 	handleMessaging();
 }
@@ -177,7 +185,7 @@ function handleMessaging() {
 		//event.returnValue = ''
 
 		if (msg == "settings") event.returnValue = JSON.stringify(settings);
-		if (msg == "fonts") event.returnValue = JSON.stringify(getFonts());
+		if (msg == "fonts") event.returnValue = '';
 		if (msg == "showMenu") {
 			var menu = electron.Menu.buildFromTemplate([
 				{"label": "Test"}
@@ -217,82 +225,6 @@ function handleMessaging() {
 		msgEvent.returnValue = '';
 	});
 
-}
-
-function getFonts() {
-	var spawn = require( 'child_process' ).spawnSync;
-	var fonts = spawn( 'fc-list' );
-	var fontList = fonts.stdout.toString().split("\n");
-	var fontArray = {};
-	var styles = [];
-	var styleWeights = {
-		"thin": '100',
-		"extralight": '200',
-		"light": '300',
-		"regular": '400',
-		"medium": '500',
-		"semibold": '600',
-		"bold": '700',
-		"extrabold": '800',
-		"black": '900',
-		"italic": '400i',
-		'100': '100',
-		'100i': '100i',
-		'200': '200',
-		'200i': '200i',
-		'300': '300',
-		'300i': '300i',
-		'400': '400',
-		'400i': '400i',
-		'500': '500',
-		'500i': '500i',
-		'600': '600',
-		'600i': '600i',
-		'700': '700',
-		'700i': '700i',
-		'800': '800',
-		'800i': '800i',
-		'900': '900',
-		'900i': '900i',
-		'italic': '400i',
-		'normal': '400',
-		'standard': '400'
-	}
-	var noStyleMatch = [];
-	var noStyleMatchWithNames = [];
-	for (var i=0; i<fontList.length; i++) {
-		if (fontList[i].indexOf(':') == -1) continue;
-
-		var thisFont = fontList[i].split(':');
-		var fontName = thisFont[1].split(',')[0].trim();
-		if (!fontArray[fontName]) fontArray[fontName] = [];
-
-		var styles = thisFont[2].split('style=')[1].split(',');
-		for (var j=0; j<styles.length; j++) {
-			var thisStyle = styles[j].toString().toLowerCase().trim();
-			if (thisStyle == 'italic' || thisStyle == 'oblique' || thisStyle == 'slanted') thisStyle = 'regular italic';
-			var italic = '';
-			if (thisStyle.indexOf('italic') != -1 || thisStyle.indexOf('oblique') != -1 || thisStyle.indexOf('slanted') != -1) italic = 'i';
-			var weight = styleWeights[
-				thisStyle.replace(/\-/g, '').replace(/ /g, '').replace('italic', '').replace('slanted', '').replace('oblique', '').trim()
-			];
-			if (!weight) {
-				if (noStyleMatch.indexOf(thisStyle) == -1) {
-					noStyleMatch.push(thisStyle);
-					noStyleMatchWithNames.push(fontName+': '+thisStyle);
-				}
-				continue;
-			}
-			weight += italic;
-
-			if (fontArray[fontName].indexOf(weight.toString()) == -1)
-				fontArray[fontName].push(weight.toString());
-
-			if (styles.indexOf(weight) == -1) styles[styles.length] = weight;
-		}
-	}
-
-	return fontArray;
 }
 
 // This method will be called when Electron has finished

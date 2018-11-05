@@ -1,23 +1,17 @@
 {
-    "controlDisplay": 21977761488839172,
-    "presentDisplay": 21977761488839170,
+    "controlDisplay": 1133551107,
+    "presentDisplay": 2480450848,
     "controlWindow": {
-        "x": 409,
-        "y": 141,
+        "x": 28,
+        "y": 13,
         "w": 1000,
         "h": 800,
         "width": 1000,
-        "height": 800
-    },
-    "db": {
-        "host": "localhost",
-        "user": "church",
-        "pass": "m57gKByd8Q9tRjFV",
-        "database": "churchpresent"
+        "height": 803
     },
     "modules": [
         "song",
-        "scripture",
+        "esv",
         "video"
     ]
 }
