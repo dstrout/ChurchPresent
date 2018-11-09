@@ -14,13 +14,38 @@ let settings = {}
 // be closed automatically when the JavaScript object is garbage collected.
 let appWindows = {}
 
+function startLoad() {
+	var primaryScreen = electron.screen.getPrimaryDisplay();
+	//console.log(primaryScreen.bounds);
+
+	appWindows.loadingWindow = new BrowserWindow({
+		backgroundColor: "#5599FF",
+		x: primaryScreen.bounds.width / 2 - 400,
+		y: primaryScreen.bounds.height / 2 - 300,
+		width: 800,
+		height: 600,
+		frame: false
+	});
+
+	appWindows.loadingWindow.loadURL(url.format({
+		pathname: path.join(__dirname, 'core/html/loading.html'),
+		protocol: 'file:',
+		slashes: true
+	}));
+
+	appWindows.loadingWindow.webContents.on('did-finish-load', () => {
+    	appWindows.loadingWindow.webContents.send('loadStatus', 'Loading settings...');
+		loadSettings();
+		//setTimeout(loadSettings, 5000);
+  	});
+}
+
 function loadSettings() {
-	//console.log(electron.screen.getAllDisplays());
-	//app.exit();return;
 	settings.controlDisplay = electron.screen.getPrimaryDisplay().id,
 	settings.presentDisplay = electron.screen.getPrimaryDisplay().id,
 
 	fs.readFile(path.join(__dirname, 'settings.json'), 'utf8', function(err, settingsFile) {
+		appWindows.loadingWindow.webContents.send('loadStatus', 'Getting ready...');
 
 		if (err) {
 
@@ -47,23 +72,16 @@ function loadSettings() {
 
 function createWindows() {
 	var displays = electron.screen.getAllDisplays();
-	var primaryScreen = electron.screen.getPrimaryDisplay();
-	//console.log(primaryScreen.bounds);
+	//console.log(displays);app.exit();return;
 
-	appWindows.loadingWindow = new BrowserWindow({
-		backgroundColor: "#5599FF",
-		x: primaryScreen.bounds.width / 2 - 400,
-		y: primaryScreen.bounds.height / 2 - 300,
-		width: 800,
-		height: 600,
-		frame: false
-	})
+	if (!settings.controlDisplay || !validDisplay(settings.controlDisplay)) {
+		settings.controlDisplay = displays[0].id;
+	}
 
-	appWindows.loadingWindow.loadURL(url.format({
-		pathname: path.join(__dirname, 'loading.html'),
-		protocol: 'file:',
-		slashes: true
-	}))
+	if (!settings.presentDisplay || !validDisplay(settings.presentDisplay)) {
+		if (displays.length >= 2) settings.presentDisplay = displays[1].id;
+		else settings.presentDisplay = displays[0].id;
+	}
 
 	if (settings.controlDisplay && !settings.controlWindow) {
 
@@ -73,10 +91,10 @@ function createWindows() {
 
 				thisDisplay = displays[i];
 				settings.controlWindow = {
-					"x": thisDisplay.workArea.x,
-					"y": thisDisplay.workArea.y,
-					"w": thisDisplay.workArea.width,
-					"h": thisDisplay.workArea.height
+					"x": thisDisplay.workArea.x + 30,
+					"y": thisDisplay.workArea.y + 30,
+					"w": thisDisplay.workArea.width - 60,
+					"h": thisDisplay.workArea.height - 60
 				}
 
 			}
@@ -111,21 +129,10 @@ function createWindows() {
 
 	// and load the index.html of the app.
 	appWindows.controlWindow.loadURL(url.format({
-		pathname: path.join(__dirname, 'index.html'),
+		pathname: path.join(__dirname, 'core/html/index.html'),
 		protocol: 'file:',
 		slashes: true
 	}))
-
-	/* appWindows.controlWindow.once('ready-to-show', () => {
-		appWindows.loadingWindow.close()
-		appWindows.loadingWindow = null
-		appWindows.controlWindow.show()
-		appWindows.presentWindow.show()
-		//console.log(appWindows.controlWindow.getBounds());
-	}) */
-
-	// Open the DevTools.
-	// mainWindow.webContents.openDevTools()
 
 	// Emitted when the window is closed.
 	appWindows.controlWindow.on('close', function () {
@@ -155,27 +162,37 @@ function createWindows() {
 		appWindows.controlWindow.focus()
 	})
 
-	appWindows.presentWindow = new BrowserWindow({
-		x: presentDisplay.workArea.x,
-		y: presentDisplay.workArea.y,
-		show: false,
-		skipTaskbar: true,
-		autoHideMenuBar: true,
 
-	})
-	appWindows.presentWindow.setMenu(null);
-	appWindows.presentWindow.loadURL(url.format({
-		pathname: path.join(__dirname, 'present.html'),
-		protocol: 'file:',
-		slashes: true,
-		frame: false
-	}))
 
-	appWindows.presentWindow.show();appWindows.presentWindow.setFullScreen(true);appWindows.presentWindow.setAlwaysOnTop(true);
-	appWindows.loadingWindow.close();appWindows.loadingWindow = null;appWindows.controlWindow.show();appWindows.controlWindow.focus();
-	appWindows.controlWindow.webContents.openDevTools()
+	appWindows.controlWindow.webContents.once('did-finish-load', () => {
+    	appWindows.loadingWindow.webContents.send('loadStatus', 'Controller ready, starting presenter...');
 
-	handleMessaging();
+		appWindows.presentWindow = new BrowserWindow({
+			x: presentDisplay.workArea.x,
+			y: presentDisplay.workArea.y,
+			show: false,
+			skipTaskbar: true,
+			autoHideMenuBar: true,
+
+		})
+		appWindows.presentWindow.setMenu(null);
+		appWindows.presentWindow.loadURL(url.format({
+			pathname: path.join(__dirname, 'core/present.html'),
+			protocol: 'file:',
+			slashes: true,
+			frame: false
+		}))
+
+		appWindows.presentWindow.webContents.once('did-finish-load', () => {
+			appWindows.loadingWindow.webContents.send('loadStatus', 'Presenter ready, loading modules (0/'+settings.modules.length+')...');
+		});
+  	});
+
+	//appWindows.presentWindow.show();appWindows.presentWindow.setFullScreen(true);appWindows.presentWindow.setAlwaysOnTop(true);
+	//appWindows.loadingWindow.close();appWindows.loadingWindow = null;appWindows.controlWindow.show();appWindows.controlWindow.focus();
+	//appWindows.controlWindow.webContents.openDevTools()
+
+	//handleMessaging();
 }
 
 function handleMessaging() {
@@ -227,10 +244,19 @@ function handleMessaging() {
 
 }
 
+function validDisplay(displayId) {
+	var displays = electron.screen.getAllDisplays();
+	var valid = false;
+	displays.forEach(function(display) {
+		if (display.id == displayId) valid = true;
+	});
+	return valid;
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', loadSettings);
+app.on('ready', startLoad);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {

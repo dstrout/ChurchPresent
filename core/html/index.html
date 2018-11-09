@@ -4,22 +4,19 @@
 	<head>
 		<title>ChurchPresent</title>
 		<link rel="icon" sizes="480x480" href="icon.png">
-		<link rel="stylesheet" href="data/css/jquery-ui.min.css">
-		<link rel="stylesheet" href="data/css/jquery-ui.structure.min.css">
-		<link rel="stylesheet" href="data/css/jquery-ui.theme.min.css">
-		<link rel="stylesheet" href="data/css/churchpresent.css">
+		<link rel="stylesheet" href="../core/css/churchpresent.css">
 		<script>
+			console.log(window.location.href);
 			window.nodeRequire = require;
 			delete window.require;
 			delete window.exports;
 			delete window.module;
 		</script>
-		<script defer src="data/fa5/js/packs/solid.js"></script>
-		<script defer src="data/fa5/js/fontawesome.js"></script>
-		<script type="text/javascript" src="data/js/jquery-3.2.1.min.js"></script>
-		<script type="text/javascript" src="data/js/jquery-ui.min.js"></script>
-		<!--<script type="text/javascript" src="data/js/control/program.js"></script>
-		<script type="text/javascript" src="data/js/control/init.js"></script>-->
+		<script defer src="../core/fa5/js/packs/solid.js"></script>
+		<script defer src="../core/fa5/js/fontawesome.js"></script>
+		<script type="text/javascript" src="../core/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript" src="../core/js/control/program.js"></script>
+		<script type="text/javascript" src="../data/js/control/init.js"></script>
 	</head>
 	<body>
 		<div id="toolbar" ondblclick="window.location.reload();">

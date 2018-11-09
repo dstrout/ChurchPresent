@@ -1,0 +1,46 @@
+{
+	"songPath": "C:\Users\David\Dropbox\ChurchPresent\Songs\Dev\JSON",
+	"display": [
+		"title": {
+			"show": "all"
+		},
+		"author": {
+			"show": "all"
+		},
+		"text": {
+			"show": "all"
+		},
+		"copyright": {
+			"show": "all"
+		}
+	]
+	"styles": {
+		"background": {
+			"backgroundColor": "#000000"
+		},
+		"title": {
+			"fontSize": "27px",
+			"fontFamily": "Times New Roman",
+			"textAlign": "center",
+			"color": "#FFFF00"
+		},
+		"author": {
+			"fontSize": "22px",
+			"fontFamily": "Times New Roman",
+			"textAlign": "center",
+			"color": "#00FFFF"
+		},
+		"text": {
+			"fontSize": "27px",
+			"fontFamily": "TW Cen MT Condensed",
+			"textAlign": "center",
+			"color": "#FFFFFF"
+		},
+		"copyright": {
+			"fontSize": "20px",
+			"fontFamily": "Times New Roman",
+			"textAlign": "center",
+			"color": "#00FFFF"
+		}
+	}
+}

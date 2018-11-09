@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Starting ChurchPresent</title>
+    <style type="text/css">
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #center-outer {
+            width: 100%;
+            height: 100%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Open Sans";
+            font-weight: 300;
+            text-align: center;
+        }
+
+        #center-outer h1 {
+            font-weight: 300;
+        }
+    </style>
+    <script type="text/javascript">
+        window.nodeRequire = require;
+        delete window.require;
+        delete window.exports;
+        delete window.module;
+
+        nodeRequire('electron').ipcRenderer.on('loadStatus', (event, message) => {
+            document.getElementById('loadingText').innerHTML = message;
+        });
+    </script>
+</head>
+<body>
+    <div id="center-outer">
+        <div>
+            <h1 style="font-weight:300;">ChurchPresent</h1>
+            <span id="loadingText">Starting ChurchPresent...</span>
+        </div>
+    </div>
+</body>
+</html>

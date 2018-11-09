@@ -1,17 +1,16 @@
 {
-    "controlDisplay": 1133551107,
-    "presentDisplay": 2480450848,
+    "controlDisplay": 2528732444,
+    "presentDisplay": 2779098405,
     "controlWindow": {
-        "x": 28,
-        "y": 13,
+        "x": 335,
+        "y": 63,
         "w": 1000,
         "h": 800,
         "width": 1000,
-        "height": 803
+        "height": 800
     },
     "modules": [
         "song",
-        "esv",
-        "video"
+        "esv"
     ]
 }

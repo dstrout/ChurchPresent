@@ -1,2 +1,1 @@
-const electron = require('electron');
-console.log(electron.screen.getAllDisplays());
+console.log('te5st');

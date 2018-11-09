@@ -5,16 +5,13 @@
   "private": true,
   "main": "main.js",
   "scripts": {
-    "start": "./node_modules/.bin/electron .",
-    "postinstall": "electron-rebuild"
+    "start": "./node_modules/.bin/electron ./main.js"
   },
   "author": "David Strout",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^3.0.0",
-    "electron-rebuild": "^1.8.2",
     "system-font-families": "^0.4.0",
-    "mysql": "^2.16.0",
     "request": "^2.88.0"
   }
 }
