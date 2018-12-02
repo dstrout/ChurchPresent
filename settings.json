@@ -1,16 +1,25 @@
 {
-    "controlDisplay": 2528732444,
-    "presentDisplay": 2779098405,
+    "controlDisplay": 1133551107,
+    "presentDisplay": 2480450848,
     "controlWindow": {
-        "x": 335,
-        "y": 63,
+        "x": 297,
+        "y": 32,
         "w": 1000,
         "h": 800,
-        "width": 1000,
-        "height": 800
+        "width": 1003,
+        "height": 804
     },
     "modules": [
-        "song",
-        "esv"
+        {
+            "name": "song",
+            "enabled": false,
+            "settings": {
+                "songsPath": "C:/Users/David/Dropbox/ChurchPresent/Songs/Dev/JSON"
+            }
+        },
+        {
+            "enabled": true,
+            "name": "esv"
+        }
     ]
 }

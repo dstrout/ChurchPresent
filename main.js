@@ -9,6 +9,8 @@ const url = require('url')
 const fs = require('fs')
 
 let settings = {}
+let modulesEnabled = 0;
+let modulesLoaded = 0;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -135,32 +137,15 @@ function createWindows() {
 	}))
 
 	// Emitted when the window is closed.
-	appWindows.controlWindow.on('close', function () {
-		// Dereference the window object, usually you would store windows
-		// in an array if your app supports multi windows, this is the time
-		// when you should delete the corresponding element.
-		var controlWindow = appWindows.controlWindow.getBounds();
-		settings.controlWindow.x = controlWindow.x;
-		settings.controlWindow.y = controlWindow.y;
-		settings.controlWindow.width = controlWindow.width;
-		settings.controlWindow.height = controlWindow.height;
-		console.log(settings);
+	appWindows.controlWindow.on('close', callItADay);
 
-		fs.writeFile(path.join(__dirname, 'settings.json'), JSON.stringify(settings, null, '    ') + "\n", function(){})
-
-		appWindows.controlWindow = null
-		appWindows.presentWindow.destroy()
-		appWindows.presentWindow = null
-
-		app.exit();
-	})
 	appWindows.controlWindow.on('minimize', function () {
 		appWindows.presentWindow.hide()
-	})
+	});
 	appWindows.controlWindow.on('restore', function () {
 		appWindows.presentWindow.show()
 		appWindows.controlWindow.focus()
-	})
+	});
 
 
 
@@ -177,69 +162,78 @@ function createWindows() {
 		})
 		appWindows.presentWindow.setMenu(null);
 		appWindows.presentWindow.loadURL(url.format({
-			pathname: path.join(__dirname, 'core/present.html'),
+			pathname: path.join(__dirname, 'core/html/present.html'),
 			protocol: 'file:',
 			slashes: true,
 			frame: false
-		}))
+		}));
+		appWindows.presentWindow.on('close', nope);
+		appWindows.presentWindow.on('minimize', function(e) {
+			e.preventDefault();
+			appWindows.presentWindow.restore();
+			appWindows.presentWindow.focus();
+			appWindows.presentWindow.setMenu(null);
+			return false;
+		});
 
 		appWindows.presentWindow.webContents.once('did-finish-load', () => {
-			appWindows.loadingWindow.webContents.send('loadStatus', 'Presenter ready, loading modules (0/'+settings.modules.length+')...');
+			//appWindows.presentWindow.on('close', function(){return false;});
+			//appWindows.presentWindow.webContents.openDevTools();
+			settings.modules.forEach(function(module) {
+				if (module.enabled) modulesEnabled++;
+			});
+			appWindows.loadingWindow.webContents.send('loadStatus', 'Core ready, loading modules (0/'+modulesEnabled+')...');
+			appWindows.controlWindow.webContents.send('windowsReady', JSON.stringify(settings));
 		});
-  	});
 
-	//appWindows.presentWindow.show();appWindows.presentWindow.setFullScreen(true);appWindows.presentWindow.setAlwaysOnTop(true);
-	//appWindows.loadingWindow.close();appWindows.loadingWindow = null;appWindows.controlWindow.show();appWindows.controlWindow.focus();
-	//appWindows.controlWindow.webContents.openDevTools()
+  });
 
-	//handleMessaging();
+	handleMessaging();
 }
 
 function handleMessaging() {
 
-	electron.ipcMain.on('control.request', (event, msg) => {
-		//console.log(arg)  // prints "ping"
-		//event.returnValue = ''
-
-		if (msg == "settings") event.returnValue = JSON.stringify(settings);
-		if (msg == "fonts") event.returnValue = '';
-		if (msg == "showMenu") {
-			var menu = electron.Menu.buildFromTemplate([
-				{"label": "Test"}
-			]);
-			menu.popup(appWindows.controlWindow, {async: false});
-			menu.closePopup();
-			event.returnValue = '';
-		}
-
+	electron.ipcMain.on('present-load', (event, module) => {
+		console.log('Received request from control to load '+module+' module');
+		appWindows.presentWindow.webContents.send('load-module', module);
 	});
 
-	electron.ipcMain.on('control.showMenu', (msgEvent, msg) => {
-
-		var srcMenuItems = JSON.parse(msg);
-		var menuItems = [];
-		for (var i=0; i<srcMenuItems.length; i++) {
-			var thisItem = srcMenuItems[i];
-			if (thisItem.label == "---") menuItems.push({"type": "separator"});
-			else {
-				menuItems.push({
-					click: function(menuItem){msgEvent.sender.send('menuAction', menuItem.actionName);console.log(menuItem);},
-					"label": thisItem.label,
-					"actionName": thisItem.action
-				});
-			}
-		}
-		console.log(menuItems);
-		var menu = electron.Menu.buildFromTemplate(menuItems);
-		menu.popup(appWindows.controlWindow, {async: true});
-		//menu.closePopup();
-		msgEvent.returnValue = '';
-
+	electron.ipcMain.on('present-loaded', (event, module, response) => {
+		console.log('Present says '+module+' module loaded with this info: '+response);
+		appWindows.controlWindow.webContents.send('present-loaded:'+module, response);
+		modulesLoaded++;
+		appWindows.loadingWindow.webContents.send('loadStatus', 'Core ready, loading modules ('+modulesLoaded+'/'+modulesEnabled+')...');
 	});
 
-	electron.ipcMain.on('control.presentRender', (msgEvent, msg) => {
-		appWindows.presentWindow.send('renderProgram');
-		msgEvent.returnValue = '';
+	electron.ipcMain.on('present-load-failed', (event, module, error) => {
+		console.error('Present says '+module+' module failed to load with this info: '+error);
+		appWindows.controlWindow.webContents.send('present-load-failed:'+module, error);
+		modulesLoaded++;
+		appWindows.loadingWindow.webContents.send('loadStatus', 'Core ready, loading modules ('+modulesLoaded+'/'+modulesEnabled+')...');
+	});
+
+	electron.ipcMain.on('modules-loaded', (event) => {
+		console.log('Control says all modules loaded');
+
+		appWindows.controlWindow.show();
+		appWindows.controlWindow.focus();
+
+		appWindows.presentWindow.show();
+		appWindows.presentWindow.setFullScreen(true);
+		appWindows.presentWindow.setAlwaysOnTop(true);
+
+		appWindows.loadingWindow.close();
+		appWindows.loadingWindow = null;
+
+		appWindows.controlWindow.focus();
+	});
+
+	electron.ipcMain.on('open-control-inspector', (event) => {
+		appWindows.controlWindow.webContents.openDevTools();
+	});
+
+	electron.ipcMain.on('open-present-inspector', (event) => {
+		appWindows.presentWindow.webContents.openDevTools();
 	});
 
 }
@@ -271,4 +265,32 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow()
   }
-})
+});
+
+function writeSettings() {
+	fs.writeFile(path.join(__dirname, 'settings.json'), JSON.stringify(settings, null, '    ') + "\n", function(){})
+}
+
+function nope(e) {
+	if (e) e.preventDefault();
+	return false;
+}
+
+function callItADay() {
+	// Dereference the window object, usually you would store windows
+	// in an array if your app supports multi windows, this is the time
+	// when you should delete the corresponding element.
+	var controlWindow = appWindows.controlWindow.getBounds();
+	settings.controlWindow.x = controlWindow.x;
+	settings.controlWindow.y = controlWindow.y;
+	settings.controlWindow.width = controlWindow.width;
+	settings.controlWindow.height = controlWindow.height;
+	//console.log(settings);
+	writeSettings();
+
+	appWindows.controlWindow = null
+	appWindows.presentWindow.destroy()
+	appWindows.presentWindow = null
+
+	app.exit();
+}

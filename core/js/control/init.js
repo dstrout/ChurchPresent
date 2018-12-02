@@ -1,48 +1,39 @@
+let settings = null;
+let modules = [];
+let electron = nodeRequire('electron');
+let loading = [];
 
-var presenter;
-var $p;
-var ipcRenderer = nodeRequire('electron').ipcRenderer;
-var settings = JSON.parse(ipcRenderer.sendSync('control.request', 'settings'));
-var fonts = JSON.parse(ipcRenderer.sendSync('control.request', 'fonts'));
-
-const mysql = nodeRequire('electron').remote.require('mysql');
-var db = mysql.createConnection({
-	'host': settings.db.host,
-	'user': settings.db.user,
-	'password': settings.db.pass,
-	'database': settings.db.database
-})
-
-db.connect(function(err) {
-	if (err) console.log(err);
+nodeRequire('electron').ipcRenderer.on('windowsReady', (event, message) => {
+	settings = JSON.parse(message);
+	loadModules();
 });
 
-const nodeRequest = nodeRequire('electron').remote.require('request');
-
-$(function() {
-	
-	
-	
-});
-
-var menuElem;
-function showMenu(menu, elem) {
-	menuElem = elem;
-	
-	var menuItems = [];
-	jQuery.each(menu, function(label, action) {
-		menuItems.push({"label": label, "action": action.name})
+function loadModules() {
+	//var loading = [];
+	settings.modules.forEach(function(module) {
+		if (module.enabled) {
+			console.log('Loading '+module.name+' control module');
+			modules[module.name] = nodeRequire('../../present_modules/'+module.name+'/control.js');
+			loading[loading.length] = modules[module.name].load();
+			loading[loading.length] = loadPresentModule(module.name);
+		}
 	});
-	console.log(menuItems);
-	ipcRenderer.send('control.showMenu', JSON.stringify(menuItems));
+
+	// No need for a reject catcher - the main process and loading window will kill execution at that point
+	Promise.all(loading).then(function() {
+		electron.ipcRenderer.send('modules-loaded');
+	});
 }
 
-ipcRenderer.on('menuAction', (event, arg) => {
-	if (window[arg] && jQuery.isFunction(window[arg])) window[arg].call(menuElem);
-	menuElem = null;
-});
-
-function doneLoading() {
-	console.log('all components ready');
-	initGUI();
+function loadPresentModule(module) {
+	console.log('Loading '+module+' present module');
+	electron.ipcRenderer.send('present-load', module);
+	return new Promise(function(resolve, reject) {
+		electron.ipcRenderer.on('present-loaded:'+module, (event, response) => {
+	  	resolve(response);
+		});
+		electron.ipcRenderer.on('present-load-failed:'+module, (event, response) => {
+	  	reject(response);
+		});
+	});
 }
