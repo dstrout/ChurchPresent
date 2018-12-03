@@ -54,10 +54,10 @@ function loadSettings() {
 			console.error('Could not read settings file!');
 
 		} else {
-			console.log(settingsFile);
+			//console.log(settingsFile);
 			try {
 				settings = JSON.parse(settingsFile);
-				console.log(settings);
+				//console.log(settings);
 			} catch (e) {
 				console.error("Could not load settings file JSON");
 			}

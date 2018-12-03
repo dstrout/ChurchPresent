@@ -2,12 +2,12 @@
     "controlDisplay": 1133551107,
     "presentDisplay": 2480450848,
     "controlWindow": {
-        "x": 297,
+        "x": 296,
         "y": 32,
         "w": 1000,
         "h": 800,
-        "width": 1003,
-        "height": 804
+        "width": 1000,
+        "height": 800
     },
     "modules": [
         {
