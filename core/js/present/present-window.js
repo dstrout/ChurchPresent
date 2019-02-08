@@ -2,9 +2,9 @@ let modules = [];
 let electron = nodeRequire('electron');
 let ipcRenderer = electron.ipcRenderer;
 
-ipcRenderer.on('load-module', (event, module) => {
+ipcRenderer.on('load-module', (event, module, moduleSettings) => {
 		modules[module] = nodeRequire('../../present_modules/'+module+'/present.js');
-		modules[module].load().then(function(success) {
+		modules[module].load(moduleSettings).then(function(success) {
 			ipcRenderer.send('present-loaded', module, success);
 		}, function(error) {
 			ipcRenderer.send('present-load-failed', module, error);

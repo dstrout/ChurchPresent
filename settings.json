@@ -1,13 +1,11 @@
 {
-    "controlDisplay": 1133551107,
-    "presentDisplay": 2480450848,
+    "controlDisplay": 2528732444,
+    "presentDisplay": 2779098405,
     "controlWindow": {
-        "x": 296,
-        "y": 32,
-        "w": 1000,
-        "h": 800,
-        "width": 1000,
-        "height": 800
+        "x": 230,
+        "y": 65,
+        "w": 1455,
+        "h": 945
     },
     "modules": [
         {
@@ -18,8 +16,11 @@
             }
         },
         {
+            "name": "esv",
             "enabled": true,
-            "name": "esv"
+            "settings": {
+                "authToken": "6123296c087f20c95782765c775da552b1aac4f7"
+            }
         }
     ]
 }

@@ -1,6 +1,6 @@
 module.exports = {
 
-  load: function() {
+  load: function(settings) {
     return new Promise(function(resolve, reject) {
       resolve('ready');
     });

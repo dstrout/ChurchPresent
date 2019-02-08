@@ -64,7 +64,7 @@ function loadSettings() {
 
 		}
 
-		//console.log(settings);
+		console.log(settings);
 
 		createWindows();
 
@@ -117,15 +117,25 @@ function createWindows() {
 
 	}
 
-	appWindows.controlWindow = new BrowserWindow({
-		width: settings.controlWindow.w,
-		height: settings.controlWindow.h,
-		x: settings.controlWindow.x,
-		y: settings.controlWindow.y,
+	var controlWindowProperties = {
 		show: false,
 		icon: path.join(__dirname, 'icon.png'),
-		autoHideMenuBar: false
-	})
+		autoHideMenuBar: false,
+		//frame: false,
+	};
+
+	if (!settings.controlWindow.maximized) {
+		controlWindowProperties.width = settings.controlWindow.w;
+		controlWindowProperties.height = settings.controlWindow.h;
+		controlWindowProperties.x = settings.controlWindow.x;
+		controlWindowProperties.y = settings.controlWindow.y;
+	}
+
+	appWindows.controlWindow = new BrowserWindow(controlWindowProperties);
+
+	if (settings.controlWindow.maximized) {
+		appWindows.controlWindow.maximize();
+	}
 
 	appWindows.controlWindow.setMenu(null);
 
@@ -193,9 +203,9 @@ function createWindows() {
 
 function handleMessaging() {
 
-	electron.ipcMain.on('present-load', (event, module) => {
+	electron.ipcMain.on('present-load', (event, module, moduleSettings) => {
 		console.log('Received request from control to load '+module+' module');
-		appWindows.presentWindow.webContents.send('load-module', module);
+		appWindows.presentWindow.webContents.send('load-module', module, moduleSettings);
 	});
 
 	electron.ipcMain.on('present-loaded', (event, module, response) => {
@@ -280,11 +290,16 @@ function callItADay() {
 	// Dereference the window object, usually you would store windows
 	// in an array if your app supports multi windows, this is the time
 	// when you should delete the corresponding element.
-	var controlWindow = appWindows.controlWindow.getBounds();
-	settings.controlWindow.x = controlWindow.x;
-	settings.controlWindow.y = controlWindow.y;
-	settings.controlWindow.width = controlWindow.width;
-	settings.controlWindow.height = controlWindow.height;
+	if (appWindows.controlWindow.isMaximized()) {
+		settings.controlWindow = { 'maximized': true };
+	} else {
+		var controlWindow = appWindows.controlWindow.getBounds();
+		settings.controlWindow = {};
+		settings.controlWindow.x = controlWindow.x;
+		settings.controlWindow.y = controlWindow.y;
+		settings.controlWindow.w = controlWindow.width;
+		settings.controlWindow.h = controlWindow.height;
+	}
 	//console.log(settings);
 	writeSettings();
 

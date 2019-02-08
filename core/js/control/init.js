@@ -1,12 +1,23 @@
 let settings = null;
 let modules = [];
+let moduleList = [];
 let electron = nodeRequire('electron');
 let loading = [];
 
 nodeRequire('electron').ipcRenderer.on('windowsReady', (event, message) => {
 	settings = JSON.parse(message);
+	console.log(settings);
 	loadModules();
 });
+
+/*window.onload = function() {
+	const ElectronTitlebarWindows = nodeRequire('electron-titlebar-windows');
+	const titlebar = new ElectronTitlebarWindows({
+		draggable: true,
+		color: 'black',
+	});
+	titlebar.appendTo(document.getElementById('titlebar'));
+}*/
 
 function loadModules() {
 	//var loading = [];
@@ -14,8 +25,9 @@ function loadModules() {
 		if (module.enabled) {
 			console.log('Loading '+module.name+' control module');
 			modules[module.name] = nodeRequire('../../present_modules/'+module.name+'/control.js');
-			loading[loading.length] = modules[module.name].load();
-			loading[loading.length] = loadPresentModule(module.name);
+			moduleList.push(module.name);
+			loading[loading.length] = modules[module.name].load(module.settings);
+			loading[loading.length] = loadPresentModule(module);
 		}
 	});
 
@@ -26,14 +38,14 @@ function loadModules() {
 }
 
 function loadPresentModule(module) {
-	console.log('Loading '+module+' present module');
-	electron.ipcRenderer.send('present-load', module);
+	console.log('Loading '+module.name+' present module');
+	electron.ipcRenderer.send('present-load', module.name, JSON.stringify(module.settings));
 	return new Promise(function(resolve, reject) {
-		electron.ipcRenderer.on('present-loaded:'+module, (event, response) => {
-	  	resolve(response);
+		electron.ipcRenderer.on('present-loaded:'+module.name, (event, response) => {
+	  		resolve(response);
 		});
-		electron.ipcRenderer.on('present-load-failed:'+module, (event, response) => {
-	  	reject(response);
+		electron.ipcRenderer.on('present-load-failed:'+module.name, (event, response) => {
+	  		reject(response);
 		});
 	});
 }

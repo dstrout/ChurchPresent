@@ -1,14 +1,91 @@
 module.exports = {
 
-  load: function() {
+  load: function(settings) {
     return new Promise(function(resolve, reject) {
+      module.exports.settings = settings;
       resolve('ready');
     });
   },
 
-  search: function() {
+  search: function(search) {
     return new Promise(function(resolve, reject) {
-      reject('Could not load ESV Bible results');
+      var reference = new RegExp(/(?:\d\s*)?[A-Z]?[a-z]+\s*\d+(?:[:-]\d+)?(?:\s*-\s*\d+)?(?::\d+|(?:\s*[A-Z]?[a-z]+\s*\d+:\d+))?/);
+      if (!reference.test(search)) {
+          resolve([]);
+          return;
+      }
+
+      var nodeRequest = nodeRequire('request');
+      var esvApiSettings = '&include-footnotes=false&include-subheadings=false&include-headings=false&include-selahs=false&include-passage-references=false';
+      nodeRequest({
+          url: 'https://api.esv.org/v3/passage/text/?q=' + encodeURIComponent(search) + esvApiSettings,
+          headers: {
+              'Authorization': 'Token ' + module.exports.settings.authToken,
+          }
+      }, function(error, response, body) {
+          if (error || response.statusCode != 200) {
+              reject('Could not load results from ESV.org');
+              return;
+          }
+
+          var scriptureResponse = JSON.parse(body);
+          if (!scriptureResponse.passages.length) {
+            resolve([]);
+            return;
+          }
+
+          var startingChapterVerse = scriptureResponse.parsed[0][0].toString();
+          startingChapterVerse = startingChapterVerse.substr(startingChapterVerse.length - 6);
+
+          var chapterVerse = new Array(parseInt(startingChapterVerse.substr(0, 3)), parseInt(startingChapterVerse.substr(3, 6)));
+
+          var verseArray = {
+            length: 0
+          };
+
+          var passage = scriptureResponse.passages[0];
+          passage = $.trim(passage.substr(0, passage.length - 6));
+          passage = passage.split('[');
+          $.each(passage, function(i, verse) {
+            var verseNum = parseInt(verse);
+            if (isNaN(verseNum)) return true;
+
+            //console.log(verseNum);
+            //console.log(chapterVerse);
+
+            if (verseNum < chapterVerse[1]) {
+              chapterVerse[0]++;
+              chapterVerse[1] = verseNum;
+            }
+
+            chapterVerse[1] = verseNum;
+
+            var verseReference = chapterVerse[0] + ':' + verseNum;
+
+            var verseText = $.trim(verse.substr(verseNum.toString().length + 1)).replace(/LORD/g, '<span class="small-caps">Lord</span>');
+            if (verseText.indexOf('\n') != -1) {
+                verseText = verseText.split("\n");
+                $.each(verseText, function(i, thisVerseText) {
+                    verseText[i] = $.trim(thisVerseText);
+                });
+                verseText = verseText.join(' ');
+            }
+
+            verseArray[verseReference] = verseText;
+
+            verseArray.length++;
+          });
+
+          resolve([
+              {
+                  'type': 'scripture',
+                  'id': 'scripture-' + new Date().getTime(),
+                  'title': scriptureResponse.canonical,
+                  'copyright': 'The Holy Bible, English Standard Version Copyright &copy; 2006 by Crossway Bibles, a division of Good News Publishers',
+                  'slides': verseArray
+              }
+          ]);
+      })
     });
   },
 
