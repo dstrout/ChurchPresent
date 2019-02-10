@@ -12,8 +12,4 @@ module.exports = {
     });
   },
 
-  add: function() {
-
-  }
-
 }

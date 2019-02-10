@@ -11,8 +11,8 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^3.0.0",
-    "electron-titlebar-windows": "^3.0.0",
     "system-font-families": "^0.4.0",
     "request": "^2.88.0"
-  }
+  },
+  "dependencies": {}
 }

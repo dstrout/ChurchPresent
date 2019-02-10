@@ -160,7 +160,8 @@ function createWindows() {
 
 
 	appWindows.controlWindow.webContents.once('did-finish-load', () => {
-    	appWindows.loadingWindow.webContents.send('loadStatus', 'Controller ready, starting presenter...');
+		//appWindows.controlWindow.webContents.openDevTools();
+    appWindows.loadingWindow.webContents.send('loadStatus', 'Controller ready, starting presenter...');
 
 		appWindows.presentWindow = new BrowserWindow({
 			x: presentDisplay.workArea.x,

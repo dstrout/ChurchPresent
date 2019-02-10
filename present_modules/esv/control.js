@@ -2,7 +2,7 @@ module.exports = {
 
   load: function(settings) {
     return new Promise(function(resolve, reject) {
-      module.exports.settings = settings;
+      this.settings = settings;
       resolve('ready');
     });
   },
@@ -20,7 +20,7 @@ module.exports = {
       nodeRequest({
           url: 'https://api.esv.org/v3/passage/text/?q=' + encodeURIComponent(search) + esvApiSettings,
           headers: {
-              'Authorization': 'Token ' + module.exports.settings.authToken,
+              'Authorization': 'Token ' + this.settings.authToken,
           }
       }, function(error, response, body) {
           if (error || response.statusCode != 200) {
