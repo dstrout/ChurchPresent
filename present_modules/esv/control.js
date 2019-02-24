@@ -62,7 +62,7 @@ module.exports = {
 
             var verseReference = chapterVerse[0] + ':' + verseNum;
 
-            var verseText = $.trim(verse.substr(verseNum.toString().length + 1)).replace(/LORD/g, '<span class="small-caps">Lord</span>');
+            var verseText = $.trim(verse.substr(verseNum.toString().length + 1))/*.replace(/LORD/g, '<span class="small-caps">Lord</span>')*/;
             if (verseText.indexOf('\n') != -1) {
                 verseText = verseText.split("\n");
                 $.each(verseText, function(i, thisVerseText) {
@@ -78,8 +78,8 @@ module.exports = {
 
           resolve([
               {
-                  'type': 'scripture',
-                  'id': 'scripture-' + new Date().getTime(),
+                  'type': 'esv',
+                  'id': 'esv-' + new Date().getTime(),
                   'title': scriptureResponse.canonical,
                   'copyright': 'The Holy Bible, English Standard Version Copyright &copy; 2006 by Crossway Bibles, a division of Good News Publishers',
                   'slides': verseArray

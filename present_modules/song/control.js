@@ -1,5 +1,7 @@
 module.exports = {
 
+  // Required module functions
+
   load: function(settings) {
     this.settings = settings;
     this.songs = [];
@@ -57,9 +59,18 @@ module.exports = {
       if (!songObject.songs) {
         reject('No songs loaded');
       } else {
+        var results = [];
+        search = search.trim();
+        var cleanedSearch = songObject.cleanSearchTerms(search);
         songObject.songs.forEach(function(song) {
-          
+          var name = song.meta.name;
+          song.title = name;
+          var cleanedName = songObject.cleanSearchTerms(name);
+          if (search == name || cleanedSearch == name || cleanedName.indexOf(cleanedSearch) != -1) {
+            results.push(song);
+          }
         });
+        resolve(results);
       }
       resolve([]);
     });
@@ -67,6 +78,18 @@ module.exports = {
 
   add: function() {
 
+  },
+
+  // Utility functions
+
+  cleanSearchTerms: function(search) {
+    var ok = 'abcdefghijklmnopqrstuvwxyz 0123456789';
+    var cleaned = '';
+    search = search.toLowerCase().split('');
+    search.forEach(function(c) {
+      if (ok.indexOf(c) != -1) cleaned += c;
+    });
+    return cleaned;
   }
 
 }

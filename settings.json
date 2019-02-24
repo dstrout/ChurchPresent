@@ -1,18 +1,18 @@
 {
-    "controlDisplay": 2528732444,
-    "presentDisplay": 2779098405,
+    "controlDisplay": 3958967264,
+    "presentDisplay": 917481049,
     "controlWindow": {
-        "x": 230,
-        "y": 65,
-        "w": 1455,
-        "h": 945
+        "x": 80,
+        "y": 12,
+        "w": 1376,
+        "h": 848
     },
     "modules": [
         {
             "name": "song",
-            "enabled": false,
+            "enabled": true,
             "settings": {
-                "songsPath": "C:/Users/David/Dropbox/ChurchPresent/Songs/Dev/JSON"
+                "songsPath": "C:/Users/David/Dropbox/ChurchPresent/Songs"
             }
         },
         {
