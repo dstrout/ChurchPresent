@@ -1,6 +1,6 @@
 module.exports = {
 
-  load: function(settings) {
+  load: function(settings, churchPresent) {
     return new Promise(function(resolve, reject) {
       this.settings = settings;
       resolve('ready');
@@ -82,7 +82,7 @@ module.exports = {
                   'id': 'esv-' + new Date().getTime(),
                   'title': scriptureResponse.canonical,
                   'copyright': 'The Holy Bible, English Standard Version Copyright &copy; 2006 by Crossway Bibles, a division of Good News Publishers',
-                  'slides': verseArray
+                  'slides': verseArray,
               }
           ]);
       })
@@ -91,7 +91,9 @@ module.exports = {
 
   add: function() {
 
-  }
+  },
+
+  options: [{'label': 'Settings', 'action': this.esvSettings}],
 
 }
 

@@ -12,6 +12,15 @@ $(function() {
 		searchWait = setTimeout(search, 500);
 	});
 	console.log(modules);
+	console.log(moduleList);
+	/*moduleList.forEach(function(module) {
+		console.log('Looking for '+module+' options');
+		if (modules[module].options) {
+			var optionList = modules[module].options;
+			console.log(optionList);
+		}
+	});*/
+	console.log('yo again');
 });
 
 function search() {
@@ -29,4 +38,7 @@ function search() {
 		searches.push(searchPromise);
 	});
 	console.log(searches);
+	Promise.all(searches).then(function(results) {
+
+	});
 }

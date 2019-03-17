@@ -3,6 +3,15 @@ let modules = [];
 let moduleList = [];
 let electron = nodeRequire('electron');
 let loading = [];
+let churchPresent = {
+	'interface': function(interfaceContent) {
+
+	},
+
+	'addItem': function(item) {
+
+	}
+}
 
 nodeRequire('electron').ipcRenderer.on('windowsReady', (event, message) => {
 	settings = JSON.parse(message);
@@ -26,13 +35,14 @@ function loadModules() {
 			console.log('Loading '+module.name+' control module');
 			modules[module.name] = nodeRequire('../../present_modules/'+module.name+'/control.js');
 			moduleList.push(module.name);
-			loading[loading.length] = modules[module.name].load(module.settings);
+			loading[loading.length] = modules[module.name].load(module.settings, churchPresent);
 			loading[loading.length] = loadPresentModule(module);
 		}
 	});
 
 	// No need for a reject catcher - the main process and loading window will kill execution at that point
 	Promise.all(loading).then(function() {
+		//moduleList.
 		electron.ipcRenderer.send('modules-loaded');
 	});
 }

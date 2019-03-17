@@ -2,7 +2,7 @@ module.exports = {
 
   // Required module functions
 
-  load: function(settings) {
+  load: function(settings, churchPresent) {
     this.settings = settings;
     this.songs = [];
     var songObject = this;
@@ -36,6 +36,7 @@ module.exports = {
                   return;
                 }
 
+                song.fileName = item;
                 songObject.songs.push(song);
               } catch (e) {
                 console.log('Invalid JSON in song file '+item);
@@ -65,6 +66,11 @@ module.exports = {
         songObject.songs.forEach(function(song) {
           var name = song.meta.name;
           song.title = name;
+          song.actions = [
+            {'label': 'Edit song', 'action': songObject.editSong},
+            {'label': 'Choose sequence', 'action': songObject.chooseSequence}
+          ]
+
           var cleanedName = songObject.cleanSearchTerms(name);
           if (search == name || cleanedSearch == name || cleanedName.indexOf(cleanedSearch) != -1) {
             results.push(song);
@@ -77,6 +83,24 @@ module.exports = {
   },
 
   add: function() {
+
+  },
+
+  options: [{'label': 'Settings', 'action': this.songSettings}, {'label': 'New song', 'action': this.addSong}],
+
+  songSettings: function() {
+
+  },
+
+  addSong: function() {
+
+  },
+
+  editSong: function(song) {
+
+  },
+
+  chooseSequence: function(song) {
 
   },
 
