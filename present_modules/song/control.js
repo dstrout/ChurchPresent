@@ -1,10 +1,13 @@
-module.exports = {
+function Song() {
 
   // Required module functions
 
-  load: function(settings, churchPresent) {
-    this.settings = settings;
-    this.songs = [];
+  var self = this;
+
+  this.load = function(settings, churchPresent) {
+    self.settings = settings;
+    self.churchPresent = churchPresent;
+    self.songs = [];
     var songObject = this;
     return new Promise(function(resolve, reject) {
       var fs = nodeRequire('fs');
@@ -52,9 +55,9 @@ module.exports = {
         });
       }
     });
-  },
+  }
 
-  search: function(search) {
+  this.search = function(search) {
     var songObject = this;
     return new Promise(function(resolve, reject) {
       if (!songObject.songs) {
@@ -66,6 +69,7 @@ module.exports = {
         songObject.songs.forEach(function(song) {
           var name = song.meta.name;
           song.title = name;
+          song.type = 'song',
           song.actions = [
             {'label': 'Edit song', 'action': songObject.editSong},
             {'label': 'Choose sequence', 'action': songObject.chooseSequence}
@@ -80,33 +84,52 @@ module.exports = {
       }
       resolve([]);
     });
-  },
+  }
 
-  add: function() {
+  this.add = function() {
 
-  },
+  }
 
-  options: [{'label': 'Settings', 'action': this.songSettings}, {'label': 'New song', 'action': this.addSong}],
+  this.songSettings = function() {
+    self.churchPresent.interface({
+      'title': 'Song Settings',
+      'fields': {
+        'songDirectory': {
+          'type': 'directory',
+          'label': 'Song location',
+          'hint': 'Where the program will look for song files',
+          'value': self.settings.songsPath,
+          'placeholder': 'Select a directory',
+        },
+        'file': {
+          'type': 'file',
+          'label': 'File selector',
+          'placeholder': 'Pick something',
+        }
+      },
+      'submitBtn': 'Save',
+      'validate': self.validateSettings,
+      'callback': self.updateSettings,
+    });
+  }
 
-  songSettings: function() {
+  this.addSong = function() {
 
-  },
+  }
 
-  addSong: function() {
+  this.editSong = function(song) {
 
-  },
+  }
 
-  editSong: function(song) {
+  this.chooseSequence = function(song) {
 
-  },
+  }
 
-  chooseSequence: function(song) {
-
-  },
+  this.options = [{'label': 'Settings', 'action': this.songSettings}, {'label': 'New song', 'action': this.addSong}];
 
   // Utility functions
 
-  cleanSearchTerms: function(search) {
+  this.cleanSearchTerms = function(search) {
     var ok = 'abcdefghijklmnopqrstuvwxyz 0123456789';
     var cleaned = '';
     search = search.toLowerCase().split('');
@@ -117,3 +140,5 @@ module.exports = {
   }
 
 }
+
+module.exports = new Song();

@@ -161,7 +161,7 @@ function createWindows() {
 
 	appWindows.controlWindow.webContents.once('did-finish-load', () => {
 		appWindows.controlWindow.webContents.openDevTools();
-    appWindows.loadingWindow.webContents.send('loadStatus', 'Controller ready, starting presenter...');
+    	appWindows.loadingWindow.webContents.send('loadStatus', 'Controller ready, starting presenter...');
 
 		appWindows.presentWindow = new BrowserWindow({
 			x: presentDisplay.workArea.x,
@@ -169,7 +169,6 @@ function createWindows() {
 			show: false,
 			skipTaskbar: true,
 			autoHideMenuBar: true,
-
 		})
 		appWindows.presentWindow.setMenu(null);
 		appWindows.presentWindow.loadURL(url.format({
@@ -246,6 +245,25 @@ function handleMessaging() {
 	electron.ipcMain.on('open-present-inspector', (event) => {
 		appWindows.presentWindow.webContents.openDevTools();
 	});
+
+  electron.ipcMain.on('directory-dialog', (event, defaultPath, title) => {
+    var dialogOptions = {
+      title: 'Select a directory',
+      properties: ['openDirectory'],
+    };
+    if (title) dialogOptions.title = title;
+    if (fs.existsSync(defaultPath)) dialogOptions.defaultPath = defaultPath;
+
+    event.returnValue = electron.dialog.showOpenDialog(appWindows.controlWindow, dialogOptions);
+  });
+
+  electron.ipcMain.on('file-open-dialog', (event, defaultPath, title) => {
+    var dialogOptions = {};
+    if (title) dialogOptions.title = title;
+    if (fs.existsSync(defaultPath)) dialogOptions.defaultPath = defaultPath;
+
+    event.returnValue = electron.dialog.showOpenDialog(appWindows.controlWindow, dialogOptions);
+  });
 
 }
 

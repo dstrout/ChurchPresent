@@ -1,10 +1,10 @@
 {
-    "controlDisplay": 3958967264,
-    "presentDisplay": 917481049,
+    "controlDisplay": 2528732444,
+    "presentDisplay": 2779098405,
     "controlWindow": {
-        "x": 80,
-        "y": 12,
-        "w": 1376,
+        "x": 168,
+        "y": 100,
+        "w": 1312,
         "h": 848
     },
     "modules": [

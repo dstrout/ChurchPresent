@@ -19,8 +19,9 @@ html, body {
 
 #sidebar {
     height: 100%;
-    background: #222222;
+    background-color: #222;
     width: 25%;
+    position: relative;
 }
 
 #main {
@@ -40,6 +41,13 @@ html, body {
     outline: none;
 }
 
+#item-search input[type="search"].loading {
+  padding-right: 40px;
+  background-image: url(../images/search-loading.gif);
+  background-position: 96% center;
+  background-repeat: no-repeat;
+}
+
 #item-search input[type="search"]::-webkit-search-cancel-button {
     display: none;
 }
@@ -52,10 +60,230 @@ html, body {
     color: #DDD;
 }
 
+#search-results {
+  overflow-y: auto;
+}
+
+#search-results::-webkit-scrollbar {
+    width: 8px;
+}
+
+#search-results::-webkit-scrollbar-thumb {
+    background-color: #5a5a5a;
+}
+
+#search-results .no-results {
+  padding: 15px;
+  color: white;
+  font-style: italic;
+}
+
+#search-results .search-result {
+  padding: 10px 15px;
+  color: #DDD;
+  cursor: default;
+  position: relative;
+}
+
+#search-results .search-result:first-child {
+  margin-top: 5px;
+}
+
+#search-results .search-result:hover,
+#search-results .search-result.selected {
+  background-color: #353535;
+}
+
+#module-options {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 5px;
+  border-top: 1px solid #636363;
+}
+
+#module-options .module-option-menu {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+  padding: 12px 11px;
+}
+
+#module-options .module-option-menu img {
+  height: 32px;
+  width: auto;
+  cursor: pointer;
+}
+
+#module-options .module-option-menu .menu-options {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 1px);
+  left: 0;
+  width: 100%;
+  border-top: 1px solid #636363;
+  padding: 8px 0;
+  background-color: #222;
+}
+
+#module-options .module-option-menu .menu-options button {
+  background: transparent;
+  border-width: 0;
+  font: inherit;
+  color: white;
+  display: block;
+  line-height: 2.5em;
+  padding: 0 12px;
+  width: 100%;
+  text-align: left;
+  outline: none;
+  cursor: pointer;
+}
+
 .left {
 	float: left;
 }
 
 .right {
 	float: right;
+}
+
+#interface {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
+}
+
+#interface-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#interface-content {
+  width: 800px;
+  max-height: 90vh;
+  max-width: 90vw;
+  overflow-y: auto;
+  overflow-x: auto;
+  background: white;
+  border-radius: 10px;
+}
+
+.interface-title {
+    margin: 0;
+    padding: 15px 20px;
+    line-height: 1;
+    border-bottom: 1px solid #CCC;
+}
+
+.interface-form {
+  padding-top: 10px;
+}
+
+.interface-field {
+  padding: 10px 20px;
+}
+
+.interface-field.container-layout-half {
+  display: inline-block;
+  vertical-align: top;
+  width: 49%;
+}
+
+.interface-field .radio-label {
+  margin-right: 10px;
+}
+
+.interface-field .radio-label:last-child {
+  margin-right: 0;
+}
+
+.interface-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+#interface input, #interface textarea, #interface select {
+  font: inherit;
+  padding: 5px;
+}
+
+.interface-field .fs-dialog-btn {
+  font: inherit;
+  padding: 5px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.interface-field .fs-path {
+  border-width: 0;
+  outline: none;
+  margin-left: 10px;
+  padding: 0;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: default;
+  text-overflow: ellipsis;
+}
+
+.interface-field .error {
+  color: red;
+  font-size: .9375em;
+}
+
+.interface-form-submit {
+  border-top: 1px solid #CCC;
+  margin-top: 10px;
+  text-align: right;
+  padding: 17px 20px 19px 20px;
+}
+
+.interface-form-submit button {
+  font: inherit;
+  padding: 5px 15px;
+}
+
+#item-menu {
+  position: absolute;
+  background: #222;
+  border: 2px solid black;
+  display: none;
+}
+
+#item-menu:before {
+  content: " ";
+  font-size: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  width: 100vw;
+  height: 100%;
+  height: 100vh;
+}
+
+.item-menu-item {
+  color: #EEE;
+  padding: 10px;
+  cursor: default;
+  position: relative;
+  z-index: 2050;
+}
+
+.item-menu-item:hover {
+  background-color: #4E4E4E;
 }
