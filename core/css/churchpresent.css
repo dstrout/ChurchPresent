@@ -9,7 +9,7 @@ body {
 	background: white;
 	padding: 0;
 	margin: 0;
-    font-family: "Open Sans", sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 html, body {
@@ -18,27 +18,27 @@ html, body {
 }
 
 #sidebar {
-    height: 100%;
-    background-color: #222;
-    width: 25%;
-    position: relative;
+  height: 100%;
+  background-color: #222;
+  width: 25%;
+  position: relative;
 }
 
 #main {
-    height: 100%;
-    width: 75%;
-    background: #EFEFEF;
+  height: 100%;
+  width: 75%;
+  background: #EFEFEF;
 }
 
 #item-search input[type="search"] {
-    width: 100%;
-    font: inherit;
-    background-color: rgba(0, 0, 0, 0.25);
-    color: #DDD;
-    border: 0;
-    border-bottom: 1px solid #636363;
-    padding: 12px 15px;
-    outline: none;
+  width: 100%;
+  font: inherit;
+  background-color: rgba(0, 0, 0, 0.25);
+  color: #DDD;
+  border: 0;
+  border-bottom: 1px solid #636363;
+  padding: 12px 15px;
+  outline: none;
 }
 
 #item-search input[type="search"].loading {
@@ -49,15 +49,15 @@ html, body {
 }
 
 #item-search input[type="search"]::-webkit-search-cancel-button {
-    display: none;
+  display: none;
 }
 
 #item-search input[type="search"]:placeholder {
-    transition: color .5s;
+  transition: color .5s;
 }
 
 #item-search input[type="search"]:focus:placeholder {
-    color: #DDD;
+  color: #DDD;
 }
 
 #search-results {
@@ -65,11 +65,11 @@ html, body {
 }
 
 #search-results::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 #search-results::-webkit-scrollbar-thumb {
-    background-color: #5a5a5a;
+  background-color: #5a5a5a;
 }
 
 #search-results .no-results {
@@ -92,6 +92,12 @@ html, body {
 #search-results .search-result:hover,
 #search-results .search-result.selected {
   background-color: #353535;
+}
+
+.search-result-dragging {
+  background-color: #353535 !important;
+  color: #DDD !important;
+  padding: 10px 15px !important;
 }
 
 #module-options {
@@ -141,6 +147,42 @@ html, body {
   cursor: pointer;
 }
 
+#program-options {
+  background: #222;
+  border-left: 1px solid white;
+  cursor: default;
+}
+
+#program-options button, #program-options input[type="button"] {
+  background: transparent;
+  border-width: 0;
+  font: inherit;
+  font-size: 14px;
+  color: #DDD;
+  outline: none;
+  padding: 0 15px;
+  height: 100%;
+  line-height: inherit;
+  cursor: default;
+  transition: background-color .25s;
+  margin-right: -12px;
+  position: relative;
+}
+
+#program-options button[disabled], #program-options input[type="button"][disabled] {
+  background: transparent !important;
+  color: #757575;
+}
+
+#program-options button:hover, #program-options input[type="button"]:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  z-index: 10;
+}
+
+#program-items {
+  padding: 10px 0;
+}
+
 .left {
 	float: left;
 }
@@ -182,10 +224,10 @@ html, body {
 }
 
 .interface-title {
-    margin: 0;
-    padding: 15px 20px;
-    line-height: 1;
-    border-bottom: 1px solid #CCC;
+  margin: 0;
+  padding: 15px 20px;
+  line-height: 1;
+  border-bottom: 1px solid #CCC;
 }
 
 .interface-form {

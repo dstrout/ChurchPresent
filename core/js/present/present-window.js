@@ -11,6 +11,10 @@ ipcRenderer.on('load-module', (event, module, moduleSettings) => {
 		});
 });
 
+ipcRenderer.on('program-data', (event, program) => {
+  console.log(program);
+});
+
 $(document).on('keyup', function(e) {
 	if (e.keyCode == 73 && e.ctrlKey && e.shiftKey) {
 		electron.ipcRenderer.send('open-present-inspector');

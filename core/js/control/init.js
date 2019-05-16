@@ -2,6 +2,7 @@ let settings = null;
 let modules = [];
 let moduleList = [];
 let electron = nodeRequire('electron');
+let fs = nodeRequire('fs');
 let loading = [];
 let churchPresent = {
 	'interface': buildInterface,
@@ -42,6 +43,7 @@ function loadModules() {
 	Promise.all(loading).then(function() {
 		createModuleActions();
 		electron.ipcRenderer.send('modules-loaded');
+    programInit();
 	});
 }
 
@@ -158,8 +160,10 @@ function buildInterface(interfaceContent) {
           var s = $this.find('.interface-form-submit button').prop('disabled', false);
           s.text(s.data('orig-text'));
         });
-      } else {
+      } else if (interfaceContent.callback) {
         interfaceContent.callback(values).then(closeInterface, closeInterface);
+      } else {
+        closeInterface();
       }
     });
 
@@ -213,7 +217,7 @@ function fsInputs() {
     if ($this.attr('placeholder')) btn.text($this.attr('placeholder'));
     btn.on('click', function() {
       var $this = $(this);
-      var newPath = fileDialog($this.next().val(), $this.text());
+      var newPath = openFileDialog($this.next().val(), $this.text());
       console.log(newPath);
       if (newPath) $this.next().val(newPath[0]);
     });
@@ -231,8 +235,17 @@ function directoryDialog(defaultPath, title) {
   return electron.ipcRenderer.sendSync('directory-dialog', defaultPath, title);
 }
 
-function fileDialog(defaultPath, title) {
+function openFileDialog(defaultPath, title) {
   return electron.ipcRenderer.sendSync('file-open-dialog', defaultPath, title);
+}
+
+function saveFileDialog(defaultPath, title) {
+  return electron.ipcRenderer.sendSync('file-save-dialog', defaultPath, title);
+}
+
+function basicDialog(title, message, type, actions) {
+  if (!actions) actions = ['OK'];
+  return electron.ipcRenderer.sendSync('basic-dialog', title, message, type, actions);
 }
 
 function closeInterface() {

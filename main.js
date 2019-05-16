@@ -52,6 +52,7 @@ function loadSettings() {
 		if (err) {
 
 			console.error('Could not read settings file!');
+      app.exit();
 
 		} else {
 			//console.log(settingsFile);
@@ -121,7 +122,8 @@ function createWindows() {
 		show: false,
 		icon: path.join(__dirname, 'icon.png'),
 		autoHideMenuBar: false,
-		//frame: false,
+    minWidth: 1000,
+    minHeight: 750,
 	};
 
 	if (!settings.controlWindow.maximized) {
@@ -161,7 +163,7 @@ function createWindows() {
 
 	appWindows.controlWindow.webContents.once('did-finish-load', () => {
 		appWindows.controlWindow.webContents.openDevTools();
-    	appWindows.loadingWindow.webContents.send('loadStatus', 'Controller ready, starting presenter...');
+  	appWindows.loadingWindow.webContents.send('loadStatus', 'Controller ready, starting presenter...');
 
 		appWindows.presentWindow = new BrowserWindow({
 			x: presentDisplay.workArea.x,
@@ -188,7 +190,7 @@ function createWindows() {
 
 		appWindows.presentWindow.webContents.once('did-finish-load', () => {
 			//appWindows.presentWindow.on('close', function(){return false;});
-			//appWindows.presentWindow.webContents.openDevTools();
+			appWindows.presentWindow.webContents.openDevTools();
 			settings.modules.forEach(function(module) {
 				if (module.enabled) modulesEnabled++;
 			});
@@ -263,6 +265,29 @@ function handleMessaging() {
     if (fs.existsSync(defaultPath)) dialogOptions.defaultPath = defaultPath;
 
     event.returnValue = electron.dialog.showOpenDialog(appWindows.controlWindow, dialogOptions);
+  });
+
+  electron.ipcMain.on('file-save-dialog', (event, defaultPath, title) => {
+    var dialogOptions = {};
+    if (title) dialogOptions.title = title;
+    if (defaultPath && fs.existsSync(defaultPath)) dialogOptions.defaultPath = defaultPath;
+
+    event.returnValue = electron.dialog.showSaveDialog(appWindows.controlWindow, dialogOptions);
+  });
+
+  electron.ipcMain.on('basic-dialog', (event, title, message, type, actions) => {
+    var dialogOptions = {
+      'title': title,
+      'message': message,
+      'buttons': actions,
+      'type': type,
+    };
+
+    event.returnValue = electron.dialog.showMessageBox(appWindows.controlWindow, dialogOptions);
+  });
+
+  electron.ipcMain.on('program-data', (event, program) => {
+    appWindows.presentWindow.webContents.send('program-data', program);
   });
 
 }

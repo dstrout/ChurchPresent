@@ -114,8 +114,12 @@ function ESV_Bible() {
 
   }
 
-  this.updateSettings = function(settings) {
-
+  this.updateSettings = function(newSettings) {
+    return new Promise(function(resolve, reject) {
+      self.settings.authToken = newSettings.authToken;
+      self.saveSettings();
+      resolve(true);
+    });
   }
 
   this.validateSettings = function(newSettings) {

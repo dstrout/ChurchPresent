@@ -13,23 +13,37 @@
 			delete window.module;
 		</script>
 		<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript" src="../js/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="../js/control/program.js"></script>
 		<script type="text/javascript" src="../js/control/init.js"></script>
 	</head>
 	<body>
 		<aside id="sidebar" class="left">
-			<div id="item-search">
+			<section id="item-search">
 				<input type="search" placeholder="Find songs, scriptures, etc." id="search-box">
-			</div>
-			<div id="search-results">
+			</section>
+			<section id="search-results">
 
-			</div>
-			<div id="module-options">
+			</section>
+			<section id="module-options">
 
-			</div>
+			</section>
 		</aside>
 		<main id="main" class="right">
+      <section id="program-options">
+        <div class="left">
+          <button type="button" disabled id="new-program">New Program</button>
+          <button type="button" disabled id="save-program">Save Program</button>
+          <button type="button" disabled id="save-program-as">Save Program As...</button>
+          <button type="button" disabled id="open-program">Open Program...</button>
+        </div>
+        <div class="right">
 
+        </div>
+      </section>
+      <div id="program-items">
+
+      </div>
 		</main>
     <section id="interface">
       <div id="interface-wrapper">
