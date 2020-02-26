@@ -162,7 +162,7 @@ function createWindows() {
 
 
 	appWindows.controlWindow.webContents.once('did-finish-load', () => {
-		appWindows.controlWindow.webContents.openDevTools();
+		//appWindows.controlWindow.webContents.openDevTools();
   	appWindows.loadingWindow.webContents.send('loadStatus', 'Controller ready, starting presenter...');
 
 		appWindows.presentWindow = new BrowserWindow({
@@ -190,7 +190,7 @@ function createWindows() {
 
 		appWindows.presentWindow.webContents.once('did-finish-load', () => {
 			//appWindows.presentWindow.on('close', function(){return false;});
-			appWindows.presentWindow.webContents.openDevTools();
+			//appWindows.presentWindow.webContents.openDevTools();
 			settings.modules.forEach(function(module) {
 				if (module.enabled) modulesEnabled++;
 			});

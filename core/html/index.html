@@ -18,28 +18,30 @@
 		<script type="text/javascript" src="../js/control/init.js"></script>
 	</head>
 	<body>
-		<aside id="sidebar" class="left">
-			<section id="item-search">
-				<input type="search" placeholder="Find songs, scriptures, etc." id="search-box">
-			</section>
-			<section id="search-results">
+		<aside id="sidebar-build" class="left">
+			<div id="logo">ChurchPresent</div>
+			<nav class="sections">
+				<button class="program selected"><span class="icon-mask"></span><span>Program</span></button>
+				<div id="module-links">
 
-			</section>
-			<section id="module-options">
-
-			</section>
+				</div>
+			</nav>
 		</aside>
 		<main id="main" class="right">
       <section id="program-options">
         <div class="left">
-          <button type="button" disabled id="new-program">New Program</button>
-          <button type="button" disabled id="save-program">Save Program</button>
-          <button type="button" disabled id="save-program-as">Save Program As...</button>
-          <button type="button" disabled id="open-program">Open Program...</button>
+          <button type="button" disabled id="new-program" title="New Program"><span class="screen-reader-text">New Program</span></button>
+          <button type="button" disabled id="save-program" title="Save Program"><span class="screen-reader-text">Save Program</span></button>
+          <button type="button" disabled id="save-program-as" title="Save Program As..."><span class="screen-reader-text">Save Program As...</span></button>
+          <button type="button" disabled id="open-program" title="Open Program..."><span class="screen-reader-text">Open Program...</span></button>
         </div>
-        <div class="right">
+        <div class="middle" id="search">
+					<input type="search">
+					<div class="search-results"></div>
+        </div>
+				<div class="right" id="build-present-toggle">
 
-        </div>
+				</div>
       </section>
       <div id="program-items">
 
